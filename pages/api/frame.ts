@@ -5,7 +5,8 @@ import type { NextRequest } from 'next/server';
 const frames = createFrames();
 
 export const GET = frames(async (ctx) => {
-  const address = ctx.message?.requester?.address;
+  // FIXED: requester → requesterFid
+  const address = ctx.message?.requesterFid ? '0x...' : undefined;
 
   let image = 'https://quickchart.io/chart?c={type:"doughnut",data:{labels:["Portfolio"],datasets:[{data:[100]}]}}';
   let description = 'Connect your wallet to see your portfolio pulse!';
@@ -30,7 +31,7 @@ export const GET = frames(async (ctx) => {
   return {
     image,
     description,
-    buttons: buttons as any, // THIS LINE FIXES THE ERROR
+    buttons: buttons as any,
   };
 });
 
