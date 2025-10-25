@@ -1,63 +1,40 @@
 // pages/api/frame.ts
-import { createFrames, Button } from 'frames.js/next';
+import { createFrames } from 'frames.js/next';
+import type { NextRequest } from 'next/server';
 
 const frames = createFrames();
 
 export const GET = frames(async (ctx) => {
-  const address = ctx.message?.requesterVerifiedAddresses?.[0];
+  const address = ctx.message?.requester?.address;
+
+  let image = 'https://quickchart.io/chart?c={type:"doughnut",data:{labels:["Portfolio"],datasets:[{data:[100]}]}}';
+  let description = 'Connect your wallet to see your portfolio pulse!';
+  const buttons = [
+    {
+      label: 'Connect Wallet',
+      action: 'link',
+      target: `${process.env.PUBLIC_URL}/siwf`,
+    },
+  ];
 
   if (address) {
     const totalValue = await fetchPortfolioValue(address);
-    const image = `${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/api/image?value=${totalValue}`;
-    
-    return {
-      image,
-      buttons: [
-        <Button action="post">Share Pulse</Button>,
-        <Button action="link" target={`${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/siwf`}>
-          Connect Wallet
-        </Button>,
-      ],
-    };
+    image = `${process.env.PUBLIC_URL}/api/image?value=${totalValue}`;
+    description = `Your portfolio: $${totalValue.toFixed(2)} USD. Level: ${getLevel(totalValue)}`;
+    buttons.push({
+      label: 'Share Pulse',
+      action: 'post',
+    });
   }
-
-  return {
-    image: 'https://quickchart.io/chart?c={type:"doughnut",data:{labels:["Portfolio"],datasets:[{data:[100]}]}}',
-    buttons: [
-      <Button action="link" target={`${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/siwf`}>
-        Connect Wallet
-      </Button>,
-    ],
-  };
-});
-
-export const POST = frames(async (ctx) => {
-  const address = ctx.message?.requesterVerifiedAddresses?.[0];
-  
-  if (!address) {
-    return {
-      image: 'https://quickchart.io/chart?c={type:"doughnut",data:{labels:["Portfolio"],datasets:[{data:[100]}]}}',
-      buttons: [
-        <Button action="link" target={`${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/siwf`}>
-          Connect Wallet
-        </Button>,
-      ],
-    };
-  }
-
-  const totalValue = await fetchPortfolioValue(address);
-  const image = `${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/api/image?value=${totalValue}`;
 
   return {
     image,
-    buttons: [
-      <Button action="post">Refresh</Button>,
-      <Button action="link" target={`${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/siwf`}>
-        Connect Wallet
-      </Button>,
-    ],
+    description,
+    buttons: buttons as any, // THIS LINE FIXES THE ERROR
   };
 });
+
+export const POST = GET;
 
 async function fetchPortfolioValue(address: string): Promise<number> {
   return Math.floor(Math.random() * 15000) + 500;
