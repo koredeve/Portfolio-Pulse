@@ -1,23 +1,20 @@
 // pages/siwf.tsx
-import { GetServerSideProps } from "next";
-
-export default function SIWF({ siwfUrl }: { siwfUrl: string }) {
+export default function SIWF() {
   return (
-    <div
-      style={{ padding: "40px", textAlign: "center", fontFamily: "sans-serif" }}
-    >
+    <div style={{ padding: 40, textAlign: "center", fontFamily: "sans-serif" }}>
       <h1>Portfolio Pulse</h1>
-      <p>Sign in with your Farcaster wallet</p>
-      <a href={siwfUrl}>
+      <p>Sign in with Farcaster</p>
+      <a
+        href={`https://warpcast.com/~/siwf?domain=${process.env.PUBLIC_URL}&uri=${process.env.PUBLIC_URL}/api/frame`}
+      >
         <button
           style={{
             padding: "12px 24px",
-            fontSize: "18px",
-            cursor: "pointer",
+            fontSize: 18,
             background: "#8b5cf6",
             color: "white",
             border: "none",
-            borderRadius: "8px",
+            borderRadius: 8,
           }}
         >
           Connect Wallet
@@ -26,8 +23,3 @@ export default function SIWF({ siwfUrl }: { siwfUrl: string }) {
     </div>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  const siwfUrl = `https://warpcast.com/~/siwf?domain=${process.env.PUBLIC_URL}&uri=${process.env.PUBLIC_URL}/api/frame`;
-  return { props: { siwfUrl } };
-};
