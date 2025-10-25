@@ -3,7 +3,7 @@ import { createFrames } from 'frames.js/next';
 
 const frames = createFrames();
 
-export const GET = frames(async (ctx) => {
+export const GET = frames(async () => {
   return {
     image: 'https://quickchart.io/chart?c={type:"doughnut",data:{labels:["Portfolio"],datasets:[{data:[100]}]}}',
     description: 'Connect your wallet to see your portfolio pulse!',
@@ -12,7 +12,7 @@ export const GET = frames(async (ctx) => {
         label: 'Connect Wallet',
         action: 'link',
         target: `${process.env.PUBLIC_URL}/siwf`,
-      },
+      } as const,
     ],
   };
 });
