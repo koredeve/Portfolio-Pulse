@@ -1,5 +1,5 @@
 // pages/api/frame.ts
-import { createFrames } from 'frames.js/next';
+import { createFrames, Button } from 'frames.js/next';
 
 const frames = createFrames();
 
@@ -13,15 +13,10 @@ export const GET = frames(async (ctx) => {
     return {
       image,
       buttons: [
-        {
-          label: 'Share Pulse',
-          action: 'post',
-        },
-        {
-          label: 'Connect Wallet', 
-          action: 'link',
-          target: `${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/siwf`,
-        },
+        <Button action="post">Share Pulse</Button>,
+        <Button action="link" target={`${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/siwf`}>
+          Connect Wallet
+        </Button>,
       ],
     };
   }
@@ -29,11 +24,9 @@ export const GET = frames(async (ctx) => {
   return {
     image: 'https://quickchart.io/chart?c={type:"doughnut",data:{labels:["Portfolio"],datasets:[{data:[100]}]}}',
     buttons: [
-      {
-        label: 'Connect Wallet',
-        action: 'link',
-        target: `${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/siwf`,
-      },
+      <Button action="link" target={`${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/siwf`}>
+        Connect Wallet
+      </Button>,
     ],
   };
 });
@@ -45,11 +38,9 @@ export const POST = frames(async (ctx) => {
     return {
       image: 'https://quickchart.io/chart?c={type:"doughnut",data:{labels:["Portfolio"],datasets:[{data:[100]}]}}',
       buttons: [
-        {
-          label: 'Connect Wallet',
-          action: 'link',
-          target: `${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/siwf`,
-        },
+        <Button action="link" target={`${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/siwf`}>
+          Connect Wallet
+        </Button>,
       ],
     };
   }
@@ -60,15 +51,10 @@ export const POST = frames(async (ctx) => {
   return {
     image,
     buttons: [
-      {
-        label: 'Refresh',
-        action: 'post',
-      },
-      {
-        label: 'Connect Wallet',
-        action: 'link',
-        target: `${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/siwf`,
-      },
+      <Button action="post">Refresh</Button>,
+      <Button action="link" target={`${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/siwf`}>
+        Connect Wallet
+      </Button>,
     ],
   };
 });
