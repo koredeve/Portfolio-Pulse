@@ -1,31 +1,33 @@
+// pages/siwf.tsx
 import { GetServerSideProps } from "next";
-import { siwf } from "@farcaster/frames-sdk";
-import crypto from "crypto";
-import { ethers } from "ethers";
 
 export default function SIWF({ siwfUrl }: { siwfUrl: string }) {
   return (
-    <div style={{ padding: "20px", textAlign: "center" }}>
-      <h1>Connect to Portfolio Pulse</h1>
+    <div
+      style={{ padding: "40px", textAlign: "center", fontFamily: "sans-serif" }}
+    >
+      <h1>Portfolio Pulse</h1>
+      <p>Sign in with your Farcaster wallet</p>
       <a href={siwfUrl}>
-        <button style={{ padding: "10px 20px", fontSize: "18px" }}>
-          Sign In with Farcaster
+        <button
+          style={{
+            padding: "12px 24px",
+            fontSize: "18px",
+            cursor: "pointer",
+            background: "#8b5cf6",
+            color: "white",
+            border: "none",
+            borderRadius: "8px",
+          }}
+        >
+          Connect Wallet
         </button>
       </a>
-      <p>Redirects back to your Frame!</p>
     </div>
   );
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const nonce = crypto.randomBytes(32).toString("hex");
-  const siwfUrl = siwf.generate({
-    domain: process.env.PUBLIC_URL!,
-    nonce,
-    statement: "Sign in to Portfolio Pulse",
-    uri: `${process.env.PUBLIC_URL}/api/siwf-callback?nonce=${nonce}`,
-    version: "1",
-  });
-
+  const siwfUrl = `https://warpcast.com/~/siwf?domain=${process.env.PUBLIC_URL}&uri=${process.env.PUBLIC_URL}/api/frame`;
   return { props: { siwfUrl } };
 };

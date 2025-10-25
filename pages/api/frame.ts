@@ -1,17 +1,15 @@
-import { createFrames } from '@farcaster/frames-sdk';
-import type { NextApiRequest, NextApiResponse } from 'next';
+// pages/api/frame.ts
+import { createFrames } from 'frames.js/next';
+import type { NextRequest } from 'next/server';
 
-const frames = createFrames({
-  apiKey: process.env.FRAME_SECRET ?? 'fallback-secret', // Use env var
-});
+const frames = createFrames();
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Check if user has connected wallet (from session/cookie — simplify for MVP)
-  const address = req.headers['x-wallet-address'] as string || null; // In prod, use sessions
+export const GET = frames(async (ctx) => {
+  const address = ctx.message?.requester?.address;
 
-  let imageUrl = `${process.env.PUBLIC_URL}/api/static-image.png`; // Default
+  let image = 'https://quickchart.io/chart?c={type:"doughnut",data:{labels:["Portfolio"],datasets:[{data:[100]}]}}';
   let description = 'Connect your wallet to see your portfolio pulse!';
-  let buttons = [
+  const buttons = [
     {
       label: 'Connect Wallet',
       action: 'link',
@@ -20,38 +18,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   ];
 
   if (address) {
-    // Fetch portfolio summary
     const totalValue = await fetchPortfolioValue(address);
-    imageUrl = `${process.env.PUBLIC_URL}/api/image?value=${totalValue}&address=${address}`;
+    image = `${process.env.PUBLIC_URL}/api/image?value=${totalValue}`;
     description = `Your portfolio: $${totalValue.toFixed(2)} USD. Level: ${getLevel(totalValue)}`;
     buttons.push({
       label: 'Share Pulse',
       action: 'post',
-      target: `farcaster://cast?text=My Portfolio Pulse: $${totalValue.toFixed(2)}! What's yours? @portfolio-pulse`,
+      text: `My Portfolio Pulse: $${totalValue.toFixed(2)}! @portfolio-pulse`,
     });
   }
 
-  const frame = await frames.render({
-    version: 'vNext',
-    title: 'Portfolio Pulse',
-    image: imageUrl,
+  return {
+    image,
     description,
     buttons,
-  });
+  };
+});
 
-  res.status(200).json(frame);
-}
+export const POST = GET; // Reuse for button actions
 
-// Mock helper — replace with real API in utils
+// MOCK DATA — replace later with real Zerion
 async function fetchPortfolioValue(address: string): Promise<number> {
-  try {
-    const { data } = await fetch(`https://api.zerion.io/v1/wallets/${address}/positions?chain=base`, {
-      headers: { Authorization: `Bearer ${process.env.ZERION_API_KEY}` },
-    }).then(r => r.json());
-    return data.positions.reduce((sum: number, pos: any) => sum + (pos.value?.usd || 0), 0);
-  } catch {
-    return 0; // Fallback for empty wallet
-  }
+  console.log("Wallet connected:", address);
+  return Math.floor(Math.random() * 15000) + 500; // $500–$15,500
 }
 
 function getLevel(value: number): string {
