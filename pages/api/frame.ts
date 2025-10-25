@@ -9,13 +9,13 @@ export const GET = frames(async (ctx) => {
 
   let image = 'https://quickchart.io/chart?c={type:"doughnut",data:{labels:["Portfolio"],datasets:[{data:[100]}]}}';
   let description = 'Connect your wallet to see your portfolio pulse!';
-  const buttons: any[] = [
+  const buttons = [
     {
       label: 'Connect Wallet',
       action: 'link' as const,
       target: `${process.env.PUBLIC_URL}/siwf`,
     },
-  ];
+  ] as const;
 
   if (address) {
     const totalValue = await fetchPortfolioValue(address);
@@ -34,9 +34,8 @@ export const GET = frames(async (ctx) => {
   };
 });
 
-export const POST = GET; // Reuse for button actions
+export const POST = GET;
 
-// MOCK DATA — replace later
 async function fetchPortfolioValue(address: string): Promise<number> {
   console.log("Wallet:", address);
   return Math.floor(Math.random() * 15000) + 500;
