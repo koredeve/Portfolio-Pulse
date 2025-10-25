@@ -9,10 +9,10 @@ export const GET = frames(async (ctx) => {
 
   let image = 'https://quickchart.io/chart?c={type:"doughnut",data:{labels:["Portfolio"],datasets:[{data:[100]}]}}';
   let description = 'Connect your wallet to see your portfolio pulse!';
-  const buttons = [
+  const buttons: any[] = [
     {
       label: 'Connect Wallet',
-      action: 'link',
+      action: 'link' as const,
       target: `${process.env.PUBLIC_URL}/siwf`,
     },
   ];
@@ -23,8 +23,7 @@ export const GET = frames(async (ctx) => {
     description = `Your portfolio: $${totalValue.toFixed(2)} USD. Level: ${getLevel(totalValue)}`;
     buttons.push({
       label: 'Share Pulse',
-      action: 'post',
-      text: `My Portfolio Pulse: $${totalValue.toFixed(2)}! @portfolio-pulse`,
+      action: 'post' as const,
     });
   }
 
@@ -37,10 +36,10 @@ export const GET = frames(async (ctx) => {
 
 export const POST = GET; // Reuse for button actions
 
-// MOCK DATA — replace later with real Zerion
+// MOCK DATA — replace later
 async function fetchPortfolioValue(address: string): Promise<number> {
-  console.log("Wallet connected:", address);
-  return Math.floor(Math.random() * 15000) + 500; // $500–$15,500
+  console.log("Wallet:", address);
+  return Math.floor(Math.random() * 15000) + 500;
 }
 
 function getLevel(value: number): string {
